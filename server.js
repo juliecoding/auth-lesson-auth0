@@ -10,6 +10,7 @@ const express = require('express'),
 const app = express();
 
 app.use(bodyParser.json());
+//ALWAYS INIT IN THIS ORDER!!!!!!!!!!!!!!!
 app.use(session({
   resave: true, //Without this you get a constant warning about default values
   saveUninitialized: true, //Without this you get a constant warning about default values
@@ -39,11 +40,11 @@ const db = app.get('db');
 
 passport.use(new Auth0Strategy({
    domain:       config.auth0.domain,
-   clientID:     config.auth0.clientID,
+   clientID:     config.auth0.clientID, //ALL OF THESE PROPERTIES MUST BE PERFECTLY CASE-SENSITIVE
    clientSecret: config.auth0.clientSecret,
    callbackURL:  '/auth/callback'
   },
-  function(accessToken, refreshToken, extraParams, profile, done) {
+  function(accessToken, refreshToken, extraParams, profile, done) { //ALWAYS TAKES those parameters in that order 
     //Find user in database
     db.getUserByAuthId([profile.id], function(err, user) {
       user = user[0];
@@ -66,7 +67,7 @@ passport.serializeUser(function(userA, done) {
   console.log('serializing', userA);
   var userB = userA;
   //Things you might do here :
-   //Serialize just the id, get other information to add to session, 
+   //Serialize just the id, get other information to add to session,
   done(null, userB); //PUTS 'USER' ON THE SESSION
 });
 
